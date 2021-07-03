@@ -100,8 +100,6 @@ export default function ProductDetailPage() {
         userId: localStorage.getItem("userId"), userName: localStorage.getItem("userName"), price: count, expireDate: productDetail.expireDateTime,
         productId: id, AutoBid: autoBidPar
       };
-      console.log(messageData,"send mes");
-
       const message = JSON.stringify(messageData);
       hubConnection.invoke("GroupSendMessage", id, message)
         .catch(function (data) {
@@ -111,16 +109,15 @@ export default function ProductDetailPage() {
 
     }
   }
-  const sendMessage = (showMessage: boolean) => {
-
-   
-    
+  const sendMessage = (showMessage: boolean) => {    
     if (productBids.length == 0 && productDetail!=null) {
       sendServiceMessage(false);
     }
     else {
       let lastIndex = productBids.length - 1;
       let lastUserId = productBids[lastIndex].userId;
+      console.log(localStorage.getItem("userId"),"userId");
+      console.log(lastUserId,"lastUserId",productBids);
       if (lastUserId != localStorage.getItem("userId")) {
          sendServiceMessage(false);
       }
@@ -204,14 +201,16 @@ export default function ProductDetailPage() {
           const messageModel = JSON.parse(message);
           console.log(messageModel);
           if (messageModel.responseMessage == null) {
-            let data = { userName: messageModel.userName, price: messageModel.price, active: true };
+            let data = { userName: messageModel.userName, price: messageModel.price, active: true, userId:messageModel.userId };
             let newBid = parseInt(data.price);
             setBidCount(newBid);
             setProductBids(oldArray => [...oldArray, data]);
           }
           else {
-
-            alert(messageModel.responseMessage);
+            if(localStorage.getItem("userId")==messageModel.userId){
+              alert(messageModel.responseMessage);
+            }
+        
           }
 
         }
