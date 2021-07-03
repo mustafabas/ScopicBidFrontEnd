@@ -14,11 +14,16 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       padding: theme.spacing(2),
       margin: 'auto',
-      width:'25%'
+      width:'30%!important',
+      marginTop:'10px',
+      marginBottom:'10px',
+      marginLeft:'10px',
+      marginRight:"10px"
+      
     },
     image: {
-      width: 128,
-      height: 128,
+      width: 200,
+      height: 200,
     },
     img: {
       margin: 'auto',
@@ -50,7 +55,7 @@ export default function ProductItem(props:Props) {
       return (
         <Grid item>
            <Countdown date={date1} />
-          <Typography variant="body2" style={{ cursor: 'pointer' }}>
+          <Typography variant="body2" style={{ cursor: 'pointer', marginLeft:'5px' }}>
          <a href={"/product/"+item.id} className={classes.textDecoritaonNone}>
           Bid Now
           </a>
@@ -75,16 +80,16 @@ export default function ProductItem(props:Props) {
   return (
   
       <Paper className={classes.paper}>
-        <Grid container spacing={1}>
+        <Grid container spacing={0}>
           <Grid item>
             <ButtonBase className={classes.image}>
-              <img className={classes.img} alt="complex" src="https://www.antikkutu.com/upload/productsImage/1200x1200/20210428_183001.jpg" />
+              <img className={classes.img} alt={item.name} src={item.photoPath} />
             </ButtonBase>
           </Grid>
           <Grid item xs={4} sm container>
             <Grid item xs container direction="column" spacing={2}>
               <Grid item xs>
-                <Typography gutterBottom variant="subtitle1">
+                <Typography style={{width:'200'}} gutterBottom variant="subtitle1">
                  {item.name}
                 </Typography>
            
@@ -92,8 +97,9 @@ export default function ProductItem(props:Props) {
                 <Typography variant="body2" color="textSecondary">
                   ID: {item.id}
                 </Typography>
+                {renderDate(item)}
               </Grid>
-              {renderDate(item)}
+      
   
             </Grid>
             <Grid item>

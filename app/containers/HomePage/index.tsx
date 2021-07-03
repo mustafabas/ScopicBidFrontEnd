@@ -7,8 +7,9 @@ import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import { Alert } from '@material-ui/lab';
 import reducer from './reducer';
 import saga from './saga';
-import { ButtonBase, CircularProgress, Grid, IconButton, makeStyles, Modal, Paper, Typography } from '@material-ui/core';
+import { ButtonBase, CircularProgress, Grid, IconButton, makeStyles, Modal, Paper, Typography, TextField, Button } from '@material-ui/core';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import Pagination from '@material-ui/lab/Pagination';
 import { makeSelectHomeData, makeSelectLoading, makeSelectNotificationCount } from './selectors';
 import { getHomeData, loadHomeData } from './actions';
 import CloseIcon from '@material-ui/icons/Close';
@@ -99,13 +100,46 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function HomePage() {
   const { homeData, loading } = useSelector(stateSelector);
-  console.log(homeData, "homedata came");
   const [loadedData, setLoadedData] = useState(false);
-
+  const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [pageNumbers, setPageNumbers] = useState(0);
+  const [searchText, setSearchText] = useState("");
+  const [searched, setSearched] = useState(false);
   const dispatch = useDispatch();
   useInjectReducer({ key: key, reducer: reducer });
   useInjectSaga({ key: key, saga: saga });
   const styles = useStyles();
+
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
+
+  useEffect(() => {
+    {
+
+      if (homeData) {
+
+        const indexOfLastTodo = currentPage * perPage;
+        const indexOfFirstTodo = indexOfLastTodo - perPage;
+        let currentProducts:any =[];
+   
+        if (searchText.length>3) {
+           currentProducts = homeData.filter((p: any) => p.name.toLowerCase().includes(searchText.toLowerCase() || p.description.toLowerCase().includes(searchText)));
+        }
+        else{
+          currentProducts=homeData;
+        }
+
+        setPageNumbers(Math.ceil(currentProducts.length / perPage));
+        currentProducts = currentProducts.slice(indexOfFirstTodo, indexOfLastTodo);
+        setProducts(currentProducts);
+      }
+    }
+  }, [currentPage, searchText]);
+
   useEffect(() => {
     {
       if (loadedData == false) {
@@ -113,6 +147,13 @@ export default function HomePage() {
       }
       if (homeData) {
         setLoadedData(true);
+        const indexOfLastTodo = currentPage * perPage;
+        const indexOfFirstTodo = indexOfLastTodo - perPage;
+        const currentProducts = homeData.slice(indexOfFirstTodo, indexOfLastTodo);
+
+        setProducts(currentProducts);
+
+        setPageNumbers(Math.ceil(homeData.length / perPage));
       }
     }
   }, [homeData]);
@@ -128,17 +169,42 @@ export default function HomePage() {
       </Helmet>
       <div className={styles.root}>
         <Grid container spacing={1}>
-          <Grid container item xs={12} spacing={3}>
+          <Grid item>
 
-            {homeData != null && (
-              homeData.map((item: any) => {
+            <div style={{ flex: 1, flexDirection: 'column' }}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                id="searchText"
+                label="Search min. 3 char."
+                name="searchText"
+                value={searchText}
+                onChange={(e: any) => setSearchText(e.target.value)}
+              />
+
+            </div>
+            <Grid container>
+              <Grid item xs>
+              </Grid>
+            </Grid>
+
+          </Grid>
+        </Grid>
+        <Grid container spacing={1}>
+          <Grid container item xs={12} spacing={3}>
+            {loadedData==false && <CircularProgress align-item="center"></CircularProgress>}
+            {products != null && products.length > 0 && (
+              products.map((item: any) => {
                 return (
                   <ProductItem data={item} ></ProductItem>
                 )
               }))
-
             }
+          {searchText!='' && products.length==0  && <Alert severity="info">"{searchText}" couldn't find. Try with another words</Alert>}
           </Grid>
+          <Typography>Current Page: {currentPage}</Typography>
+          <Pagination count={pageNumbers} page={currentPage} onChange={handleChange} />
         </Grid>
       </div>
     </article>

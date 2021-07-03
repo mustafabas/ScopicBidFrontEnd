@@ -6,6 +6,7 @@ export const POST_LOGIN_URL = WEB_BASE_URL+"User/login";
 
 export const GET_PRODUCT_DETAIL_URL  = WEB_BASE_URL+"product?id=";
 
-export const PUT_UPDATE_SETTING = WEB_BASE_URL+"product";
+export const PUT_UPDATE_SETTING = WEB_BASE_URL+"User";
 
 
+export const GET_USER_CONFIG=WEB_BASE_URL+"User";

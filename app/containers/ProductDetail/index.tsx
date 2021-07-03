@@ -278,7 +278,7 @@ export default function ProductDetailPage() {
                 <Grid container spacing={1}>
                   <Grid item>
                     <ButtonBase className={classes.image}>
-                      <img className={classes.img} alt="complex" src="https://www.antikkutu.com/upload/productsImage/1200x1200/20210428_183001.jpg" />
+                      <img className={classes.img} alt="complex" src={productDetail.photoPath} />
                     </ButtonBase>
                   </Grid>
                   <Grid item xs={12} sm container>

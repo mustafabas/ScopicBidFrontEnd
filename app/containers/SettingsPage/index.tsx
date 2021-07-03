@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { FormattedMessage } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
+
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Alert } from '@material-ui/lab';
 import axios from 'axios';
@@ -13,9 +13,8 @@ import {
 } from '@material-ui/core';
 import { makeSelectProductDetailData } from './selectors';
 import { PUT_UPDATE_SETTING } from 'containers/App/constanst';
-const stateSelector = createStructuredSelector({
-  productDetail: makeSelectProductDetailData()
-});
+import { GET_USER_CONFIG } from 'containers/App/constanst';
+
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,8 +46,25 @@ export default function SettingPage() {
   const [message, setMessage] = useState("");
   const [maxAmount, setMaxAmount] = useState(0);
   const [updated, setUpdated] = useState(false);
-
+  const [loaded, setLoaded] = useState(false);
   const classes = useStyles();
+
+  const getValue=()=>{
+
+    const url=GET_USER_CONFIG+"?id="+localStorage.getItem("userId");
+    console.log(url);
+    axios
+    .get(url)
+    .then(response => {
+      var data = response.data.result;
+      console.log(data);
+      setMaxAmount(data.maxAmount);
+    })
+    .catch(function (error: string) {
+      console.log(error);
+    });
+
+  }
 
   const onSubmitForm = (evt?: any) => {
     if (evt !== undefined && evt.preventDefault) {
@@ -67,7 +83,13 @@ export default function SettingPage() {
         });
     }
   };
-
+  useEffect(() => {
+    if(loaded==false){
+      getValue();
+      setLoaded(true);
+    }
+   
+  }, [loaded])
 
   return (
     <article>
