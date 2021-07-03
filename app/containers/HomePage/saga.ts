@@ -10,8 +10,6 @@ import { GET_PRODUCT_URL } from 'containers/App/constanst';
 
 
 export function* getHome() {
-
-
   try {
     let url: string = GET_PRODUCT_URL;
 
